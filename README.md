@@ -1,228 +1,182 @@
-# Cynthia AI Companion Project 🎭
+# Cynthia AI Companion Project
 
-A sophisticated 2D AI Companion with advanced personality, emotion system, and real-time interaction capabilities.
+A sophisticated 2D AI Companion with advanced personality, emotion system, and real-time interaction capabilities. Cynthia is designed to provide natural, engaging conversations with a unique personality that combines cheerfulness, playfulness, and tsundere characteristics.
 
-## ✨ Features Implemented
+## About This Project
 
-### 🧠 AI Brain System
+Cynthia is an AI companion system that creates meaningful interactions through advanced personality modeling and emotional intelligence. The project focuses on building a relatable AI character that can maintain context, express emotions naturally, and adapt to different conversation modes while maintaining consistent personality traits.
 
-- **Advanced Personality Engine** - Cheerful, playful, slightly shy, and tsundere characteristics
-- **Dynamic Emotion System** - 12 different emotions with realistic transitions
+## Core Features
+
+### AI Brain System
+- **Advanced Personality Engine** - Multi-layered personality with cheerful, playful, shy, and tsundere characteristics
+- **Dynamic Emotion System** - 12 different emotions with realistic transitions and natural triggers
 - **Context Management** - Long-term and short-term memory with user relationship tracking
-- **Dual Mode Support** - Safe mode and NSFW mode with content filtering control
+- **Dual Mode Support** - Safe mode and NSFW mode with intelligent content filtering
 
-### 🎭 Personality Traits
+### Personality Traits
+- **Cheerfulness** (80%) - Bright and positive demeanor
+- **Playfulness** (70%) - Enjoys games and fun interactions
+- **Shyness** (60%) - Gets bashful with compliments and intimate topics
+- **Tsundere Level** (50%) - Sometimes acts tough but is genuinely caring
+- **Caring Level** (90%) - Very supportive and nurturing toward users
+- **Curiosity** (80%) - Eager to learn and explore new topics
 
-- **Cheerfulness**: 80% - Bright and positive demeanor
-- **Playfulness**: 70% - Loves games and fun interactions
-- **Shyness**: 60% - Gets bashful with compliments
-- **Tsundere Level**: 50% - Sometimes acts tough but is actually caring
-- **Caring Level**: 90% - Very supportive and nurturing
-- **Curiosity**: 80% - Eager to learn and explore
+### Emotion System
+Cynthia can experience and express: Happy, Excited, Shy, Playful, Caring, Curious, Embarrassed, Confident, Gentle, Mischievous, Tsundere, and Romantic emotions. Each emotion includes natural triggers, appropriate responses, realistic intensity levels, and smooth transitions.
 
-### 😊 Emotion System
+### Memory & Context
+- **Short-term Memory** - Recent conversation history (50 entries)
+- **Long-term Memory** - Important moments and interactions (200 entries)
+- **User Profiles** - Names, preferences, and relationship development
+- **Topic Tracking** - Current conversation themes and context
+- **Importance Scoring** - Automatically identifies significant interactions
 
-Cynthia can experience and express:
+## Future Development Plans
 
-- Happy, Excited, Shy, Playful
-- Caring, Curious, Embarrassed, Confident
-- Gentle, Mischievous, Tsundere, Romantic
+### Phase 3: 2D Avatar System
+- Live2D model integration for visual representation
+- Animation controller with emotion-to-visual mapping
+- Real-time facial expressions and gesture system
 
-Each emotion has:
+### Phase 4: Voice Integration
+- Speech-to-Text for voice input processing
+- Text-to-Speech with emotion-aware voice modulation
+- Real-time voice interaction capabilities
 
-- Natural triggers from user input
-- Appropriate animations and expressions
-- Realistic intensity and transitions
-- Context-aware responses
+### Phase 5: Enhanced Web Interface
+- Modern frontend with React/Vue.js
+- Live2D model display and interaction
+- Complete user interface with chat history and settings
 
-### 🧠 Context Awareness
-
-- **Short-term Memory**: Recent conversation (50 entries)
-- **Long-term Memory**: Important moments (200 entries)
-- **User Profiles**: Names, preferences, relationship levels
-- **Topic Tracking**: Current conversation themes
-- **Importance Scoring**: Automatically identifies significant interactions
-
-## 🚀 Quick Start
+## Getting Started
 
 ### Prerequisites
+- Python 3.10.7 or higher
+- Node.js and npm
+- Gemini API key
 
-- Python 3.10.7 ✅
-- Node.js and npm ✅
-- Gemini API key ✅
+### Backend Setup
 
-### Installation & Setup
-
-1. **Navigate to project directory**
-
+1. **Navigate to backend directory**
    ```cmd
-   cd Cynthia-project\backend
+   cd backend
    ```
 
 2. **Activate virtual environment**
-
    ```cmd
    venv\Scripts\activate
    ```
 
-3. **Install dependencies** (Already done ✅)
-
+3. **Install Python dependencies**
    ```cmd
    pip install -r requirements.txt
    ```
 
-4. **Set up environment variables**
+4. **Configure environment variables**
+   - Copy `.env.example` to `.env` (if available)
+   - Add your Gemini API key to the `.env` file
+   - Adjust other settings as needed
 
-   - API key is already configured ✅
-   - Edit `.env` file if needed
-
-5. **Run the server**
+5. **Start the backend server**
    ```cmd
    python main.py
    ```
 
-## 🌐 API Endpoints
+The backend will be available at `http://localhost:8000`
+
+### Frontend Setup
+
+1. **Navigate to frontend directory**
+   ```cmd
+   cd frontend
+   ```
+
+2. **Install Node.js dependencies**
+   ```cmd
+   npm install
+   ```
+
+3. **Start the development server**
+   ```cmd
+   npm run dev
+   ```
+
+The frontend will be available at `http://localhost:5173`
+
+## API Documentation
 
 ### Core Endpoints
-
-- `GET /` - Health check
-- `GET /health` - System status
-- `GET /test` - Interactive chat interface
+- `GET /` - Health check and basic information
+- `GET /health` - Detailed system status
+- `GET /test` - Interactive chat interface for testing
 
 ### AI Interaction
-
-- `POST /chat` - Send message to Cynthia
-- `POST /mode` - Change interaction mode (safe/nsfw)
-- `GET /status` - Get comprehensive system status
-- `POST /reset` - Reset conversation context
+- `POST /chat` - Send message to Cynthia and receive response
+- `POST /mode` - Switch between safe and NSFW interaction modes
+- `GET /status` - Get comprehensive system status and statistics
+- `POST /reset` - Reset conversation context and memory
 
 ### WebSocket
+- `WS /ws` - Real-time communication channel for live interactions
 
-- `WS /ws` - Real-time communication
-
-## 🧪 Testing
+## Testing the System
 
 ### Basic Chat Test
-
 1. Open browser to `http://localhost:8000/test`
 2. Type messages to interact with Cynthia
-3. Observe emotional responses and personality traits
+3. Observe emotional responses and personality traits in action
 
-### Mode Switching
-
+### API Testing
 ```bash
+# Test basic chat
+curl -X POST "http://localhost:8000/chat" -H "Content-Type: application/json" -d '{"message": "Hello Cynthia!"}'
+
+# Switch modes
 curl -X POST "http://localhost:8000/mode" -d "mode=nsfw"
 curl -X POST "http://localhost:8000/mode" -d "mode=safe"
-```
 
-### Status Check
-
-```bash
+# Check system status
 curl http://localhost:8000/status
 ```
 
-## 📊 Current Status: Phase 2 Complete! 🎉
-
-### ✅ Phase 1: Environment Setup (COMPLETED)
-
-- ✅ Python 3.10.7 environment
-- ✅ Virtual environment configuration
-- ✅ All required packages installed
-- ✅ Project structure created
-
-### ✅ Phase 2: AI Brain Development (COMPLETED)
-
-- ✅ **Personality Engine** - Complete with all traits
-- ✅ **Emotion System** - 12 emotions with transitions
-- ✅ **Context Manager** - Memory and user tracking
-- ✅ **LLM Integration** - Gemini 2.5 Flash implementation
-- ✅ **Mode System** - Safe/NSFW mode switching
-- ✅ **FastAPI Backend** - All endpoints functional
-
-### 🚧 Phase 3: 2D Avatar System (NEXT)
-
-- ⏳ Live2D model integration
-- ⏳ Animation controller
-- ⏳ Emotion-to-animation mapping
-
-### 🛠️ Technical Architecture
+## Project Structure
 
 ```
 Cynthia-project/
 ├── backend/
 │   ├── ai_brain/
-│   │   ├── personality_engine.py     ✅ Complete
-│   │   ├── emotion_engine.py         ✅ Complete
-│   │   ├── context_manager.py        ✅ Complete
-│   │   └── llm_integration.py        ✅ Complete
-│   ├── main.py                       ✅ FastAPI server
-│   ├── requirements.txt              ✅ All dependencies
-│   └── .env                          ✅ Configuration
-├── venv/                             ✅ Virtual environment
-└── README.md                         ✅ Documentation
+│   │   ├── personality_engine.py    # Core personality system
+│   │   ├── emotion_engine.py        # Emotion processing
+│   │   ├── context_manager.py       # Memory and context
+│   │   ├── llm_integration.py       # AI model integration
+│   │   └── natural_communication.py # Communication processing
+│   ├── api/                         # API endpoints
+│   ├── voice_system/               # Voice processing (future)
+│   ├── main.py                     # FastAPI server
+│   ├── requirements.txt            # Python dependencies
+│   └── .env                        # Configuration
+├── frontend/
+│   ├── src/                        # Vue.js source code
+│   ├── public/                     # Static assets
+│   ├── package.json               # Node.js dependencies
+│   └── vite.config.js             # Build configuration
+└── docs/                          # Documentation
 ```
 
-## 💡 Key Achievements
-
-1. **Advanced AI Personality** - Cynthia has a complex, multi-layered personality
-2. **Emotional Intelligence** - Natural emotion detection and expression
-3. **Memory System** - Remembers conversations and builds relationships
-4. **Flexible Content Modes** - Can switch between safe and unrestricted content
-5. **Real-time Interaction** - WebSocket support for live communication
-6. **Scalable Architecture** - Modular design for easy expansion
-
-## 🎯 Next Development Phases
-
-### Phase 3: 2D Avatar System (Weeks 5-6)
-
-- Live2D model creation and integration
-- Animation system with emotion mapping
-- Real-time facial expressions and gestures
-
-### Phase 4: Voice System (Weeks 7-8)
-
-- Speech-to-Text integration
-- Text-to-Speech with emotion-aware voice
-- Real-time voice interaction
-
-### Phase 5: Web Interface (Weeks 9-10)
-
-- React/Vue.js frontend
-- Live2D model display
-- Complete user interface
-
-## 🔧 Configuration
+## Configuration
 
 ### Personality Customization
-
-Edit `backend/ai_brain/personality_engine.py` to adjust:
-
-- Trait levels (cheerfulness, playfulness, etc.)
-- Emotional triggers and responses
-- Interaction modes and behaviors
+Edit `backend/ai_brain/personality_engine.py` to adjust personality traits, emotional triggers, and behavioral patterns.
 
 ### Emotion Tuning
+Modify `backend/ai_brain/emotion_engine.py` to customize emotion triggers, response intensity, and transition behaviors.
 
-Modify `backend/ai_brain/emotion_engine.py` for:
-
-- Emotion triggers and keywords
-- Response intensity and duration
-- Animation mappings
-
-## 📝 Development Notes
-
-- **Model**: Using Gemini 2.5 Flash for optimal performance
-- **Language**: All code and documentation in English
-- **Architecture**: Modular design for easy maintenance
-- **Memory**: Intelligent context management with importance scoring
-- **Personality**: Detailed tsundere characteristics with natural shyness
-- **Purpose**: AI Companion system for personal interaction and relationship building
+### API Settings
+Update `backend/.env` file to configure API keys, server settings, and other environment-specific variables.
 
 ---
 
-**Current Phase**: ✅ Phase 2 Complete - Advanced AI Brain System  
-**Next Milestone**: Phase 3 - 2D Avatar Integration  
-**Total Progress**: 28% Complete (2/7 phases)
-
-_Cynthia - Your Personal AI Companion_  
-_Last Updated: July 21, 2025_
+**Current Status**: AI Brain System Complete  
+**Technology Stack**: Python FastAPI, Vue.js, Gemini AI  
+**License**: Apache License
