@@ -1,6 +1,7 @@
 """
 Emotion Engine for Cynthia
 Handles emotion detection, transitions, and emotional responses
+Enhanced with 3D animation support
 """
 
 from enum import Enum
@@ -8,6 +9,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple, Any
 import re
 import random
+import math
 from datetime import datetime, timedelta
 
 class EmotionIntensity(Enum):
@@ -413,6 +415,327 @@ class EmotionEngine:
                 for entry in self.emotion_history[-5:]
             ]
         }
+    
+    # ===== 3D ANIMATION SUPPORT METHODS =====
+    
+    def get_facial_muscle_data(self) -> Dict[str, float]:
+        """
+        Generate detailed facial muscle activation data for 3D animation
+        
+        Returns:
+            Dictionary with facial muscle group activation levels (0.0-1.0)
+        """
+        emotion_mix = self.get_emotion_mix(0.2)  # Include subtle emotions
+        
+        # Initialize muscle activation values
+        muscle_data = {
+            # Eyebrow muscles
+            'corrugator_supercilii': 0.0,      # Eyebrow furrow (anger, concentration)
+            'frontalis': 0.0,                  # Eyebrow raise (surprise, curiosity)
+            
+            # Eye muscles
+            'orbicularis_oculi': 0.0,          # Eye squint (smile, concentration)
+            'levator_palpebrae': 1.0,          # Eyelid elevation (alertness)
+            
+            # Mouth muscles
+            'zygomaticus_major': 0.0,          # Smile (happiness)
+            'zygomaticus_minor': 0.0,          # Upper lip raise (subtle smile)
+            'depressor_anguli_oris': 0.0,      # Mouth corner down (sadness)
+            'levator_labii_superioris': 0.0,   # Upper lip raise (disgust, sneer)
+            'depressor_labii_inferioris': 0.0, # Lower lip down (sadness, pout)
+            'orbicularis_oris': 0.0,           # Lip pucker (kiss, concentration)
+            'risorius': 0.0,                   # Lip stretch (wide smile, fear)
+            
+            # Cheek muscles
+            'buccinator': 0.0,                 # Cheek compression (blowing, sucking)
+            'levator_anguli_oris': 0.0,        # Mouth corner up (smile)
+            
+            # Jaw muscles
+            'masseter': 0.0,                   # Jaw clench (anger, determination)
+            'temporalis': 0.0,                 # Jaw tension (stress, anger)
+            
+            # Nose muscles
+            'nasalis': 0.0,                    # Nostril flare (anger, disgust)
+            'levator_labii_superioris_alaeque_nasi': 0.0  # Nose wrinkle (disgust)
+        }
+        
+        # Apply emotion-specific muscle activations
+        for emotion, intensity in emotion_mix.items():
+            if emotion == 'happy':
+                muscle_data['zygomaticus_major'] += intensity * 0.8
+                muscle_data['zygomaticus_minor'] += intensity * 0.6
+                muscle_data['orbicularis_oculi'] += intensity * 0.4
+                muscle_data['levator_anguli_oris'] += intensity * 0.7
+                
+            elif emotion == 'excited':
+                muscle_data['frontalis'] += intensity * 0.7
+                muscle_data['zygomaticus_major'] += intensity * 0.9
+                muscle_data['levator_palpebrae'] += intensity * 0.3
+                muscle_data['risorius'] += intensity * 0.5
+                
+            elif emotion == 'shy':
+                muscle_data['zygomaticus_minor'] += intensity * 0.5
+                muscle_data['orbicularis_oculi'] += intensity * 0.6
+                muscle_data['levator_palpebrae'] -= intensity * 0.2
+                
+            elif emotion == 'playful':
+                muscle_data['zygomaticus_major'] += intensity * 0.6
+                muscle_data['orbicularis_oculi'] += intensity * 0.5
+                muscle_data['levator_anguli_oris'] += intensity * 0.5
+                
+            elif emotion == 'caring':
+                muscle_data['zygomaticus_minor'] += intensity * 0.4
+                muscle_data['frontalis'] += intensity * 0.3
+                muscle_data['levator_anguli_oris'] += intensity * 0.4
+                
+            elif emotion == 'curious':
+                muscle_data['frontalis'] += intensity * 0.8
+                muscle_data['levator_palpebrae'] += intensity * 0.4
+                
+            elif emotion == 'embarrassed':
+                muscle_data['zygomaticus_minor'] += intensity * 0.6
+                muscle_data['orbicularis_oculi'] += intensity * 0.7
+                muscle_data['frontalis'] += intensity * 0.4
+                
+            elif emotion == 'confident':
+                muscle_data['zygomaticus_major'] += intensity * 0.5
+                muscle_data['levator_anguli_oris'] += intensity * 0.6
+                muscle_data['masseter'] += intensity * 0.3
+                
+            elif emotion == 'gentle':
+                muscle_data['zygomaticus_minor'] += intensity * 0.4
+                muscle_data['levator_palpebrae'] -= intensity * 0.1
+                
+            elif emotion == 'mischievous':
+                muscle_data['zygomaticus_major'] += intensity * 0.7
+                muscle_data['orbicularis_oculi'] += intensity * 0.6
+                muscle_data['levator_anguli_oris'] += intensity * 0.5
+                
+            elif emotion == 'tsundere':
+                muscle_data['corrugator_supercilii'] += intensity * 0.4
+                muscle_data['depressor_anguli_oris'] += intensity * 0.3
+                muscle_data['zygomaticus_minor'] += intensity * 0.2  # Hidden smile
+                
+            elif emotion == 'romantic':
+                muscle_data['zygomaticus_minor'] += intensity * 0.5
+                muscle_data['orbicularis_oculi'] += intensity * 0.3
+                muscle_data['levator_palpebrae'] -= intensity * 0.2
+        
+        # Clamp all values to valid range
+        for muscle in muscle_data:
+            muscle_data[muscle] = max(0.0, min(1.0, muscle_data[muscle]))
+        
+        return muscle_data
+    
+    def calculate_transition_timing(self, from_emotion: str, to_emotion: str) -> float:
+        """
+        Calculate transition timing between different emotional states
+        
+        Args:
+            from_emotion: Starting emotion
+            to_emotion: Target emotion
+            
+        Returns:
+            Transition duration in seconds
+        """
+        # Base transition time
+        base_time = 0.5
+        
+        # Emotion intensity affects transition speed
+        from_intensity = self.current_emotions.get(from_emotion, 0.0)
+        to_intensity = self.current_emotions.get(to_emotion, 0.0)
+        
+        # Larger intensity changes take longer
+        intensity_diff = abs(to_intensity - from_intensity)
+        intensity_modifier = 1.0 + (intensity_diff * 0.5)
+        
+        # Some emotion pairs transition faster/slower
+        transition_modifiers = {
+            ('happy', 'excited'): 0.7,      # Quick transition
+            ('excited', 'happy'): 0.7,
+            ('shy', 'embarrassed'): 0.8,
+            ('embarrassed', 'shy'): 0.8,
+            ('caring', 'gentle'): 0.6,
+            ('gentle', 'caring'): 0.6,
+            ('playful', 'mischievous'): 0.7,
+            ('mischievous', 'playful'): 0.7,
+            ('happy', 'tsundere'): 1.5,     # Slow transition (conflicting emotions)
+            ('tsundere', 'happy'): 1.2,
+            ('confident', 'shy'): 1.4,
+            ('shy', 'confident'): 1.6,
+        }
+        
+        pair_modifier = transition_modifiers.get((from_emotion, to_emotion), 1.0)
+        
+        return base_time * intensity_modifier * pair_modifier
+    
+    def generate_animation_keyframes(self, duration: float = 2.0) -> List[Dict[str, Any]]:
+        """
+        Generate animation keyframes for smooth emotional transitions
+        
+        Args:
+            duration: Total animation duration in seconds
+            
+        Returns:
+            List of keyframe dictionaries with timing and muscle data
+        """
+        keyframes = []
+        
+        # Get current emotion state
+        primary_emotion, intensity = self.get_primary_emotion()
+        emotion_mix = self.get_emotion_mix(0.2)
+        
+        # Generate keyframes at different time points
+        time_points = [0.0, duration * 0.3, duration * 0.7, duration]
+        
+        for i, time_point in enumerate(time_points):
+            # Calculate emotion intensity curve (ease in/out)
+            progress = time_point / duration if duration > 0 else 0
+            
+            # Use sine wave for smooth transitions
+            intensity_curve = 0.5 * (1 + math.sin(math.pi * progress - math.pi/2))
+            
+            # Adjust emotion mix based on curve
+            adjusted_mix = {}
+            for emotion, base_intensity in emotion_mix.items():
+                if i == 0:  # Start frame - reduced intensity
+                    adjusted_mix[emotion] = base_intensity * 0.3
+                elif i == len(time_points) - 1:  # End frame - slightly reduced
+                    adjusted_mix[emotion] = base_intensity * 0.8
+                else:  # Middle frames - full intensity with curve
+                    adjusted_mix[emotion] = base_intensity * intensity_curve
+            
+            # Generate muscle data for this keyframe
+            muscle_data = self._get_muscle_data_for_mix(adjusted_mix)
+            
+            keyframe = {
+                'timestamp': time_point,
+                'muscle_data': muscle_data,
+                'emotion_mix': adjusted_mix,
+                'intensity_curve': intensity_curve,
+                'transition_type': 'smooth' if i > 0 else 'ease_in'
+            }
+            
+            keyframes.append(keyframe)
+        
+        return keyframes
+    
+    def _get_muscle_data_for_mix(self, emotion_mix: Dict[str, float]) -> Dict[str, float]:
+        """
+        Helper method to generate muscle data for a specific emotion mix
+        
+        Args:
+            emotion_mix: Dictionary of emotions and intensities
+            
+        Returns:
+            Dictionary of muscle activation data
+        """
+        # Temporarily store current emotions
+        original_emotions = self.current_emotions.copy()
+        
+        # Set emotions to the specified mix
+        self.current_emotions = {emotion: 0.0 for emotion in self.current_emotions}
+        for emotion, intensity in emotion_mix.items():
+            if emotion in self.current_emotions:
+                self.current_emotions[emotion] = intensity
+        
+        # Generate muscle data
+        muscle_data = self.get_facial_muscle_data()
+        
+        # Restore original emotions
+        self.current_emotions = original_emotions
+        
+        return muscle_data
+    
+    def get_expression_intensity_map(self) -> Dict[str, float]:
+        """
+        Get expression intensity mapping for different facial regions
+        
+        Returns:
+            Dictionary with intensity levels for different facial regions
+        """
+        emotion_mix = self.get_emotion_mix(0.2)
+        primary_emotion, primary_intensity = self.get_primary_emotion()
+        
+        # Calculate regional intensities
+        eye_intensity = 0.0
+        mouth_intensity = 0.0
+        eyebrow_intensity = 0.0
+        cheek_intensity = 0.0
+        
+        for emotion, intensity in emotion_mix.items():
+            if emotion in ['happy', 'excited', 'playful', 'mischievous']:
+                eye_intensity += intensity * 0.7
+                mouth_intensity += intensity * 0.9
+                cheek_intensity += intensity * 0.8
+                
+            elif emotion in ['shy', 'embarrassed', 'romantic']:
+                eye_intensity += intensity * 0.8
+                cheek_intensity += intensity * 0.9
+                mouth_intensity += intensity * 0.5
+                
+            elif emotion in ['curious', 'confident']:
+                eyebrow_intensity += intensity * 0.8
+                eye_intensity += intensity * 0.6
+                
+            elif emotion in ['caring', 'gentle']:
+                eye_intensity += intensity * 0.5
+                mouth_intensity += intensity * 0.4
+                eyebrow_intensity += intensity * 0.3
+                
+            elif emotion == 'tsundere':
+                eyebrow_intensity += intensity * 0.7
+                mouth_intensity += intensity * 0.6
+        
+        return {
+            'eye_region': min(eye_intensity, 1.0),
+            'mouth_region': min(mouth_intensity, 1.0),
+            'eyebrow_region': min(eyebrow_intensity, 1.0),
+            'cheek_region': min(cheek_intensity, 1.0),
+            'overall_intensity': primary_intensity,
+            'primary_emotion': primary_emotion
+        }
+    
+    def get_enhanced_emotional_response(self, user_input: str) -> Dict[str, Any]:
+        """
+        Generate enhanced emotional response with 3D animation data
+        
+        Args:
+            user_input: User's input text
+            
+        Returns:
+            Enhanced response dictionary with 3D animation data
+        """
+        # Get base emotional response
+        base_response = self.get_emotional_response(user_input)
+        
+        # Add 3D animation data
+        muscle_data = self.get_facial_muscle_data()
+        intensity_map = self.get_expression_intensity_map()
+        keyframes = self.generate_animation_keyframes(2.0)
+        
+        # Calculate transition timing if there was a significant emotion change
+        previous_emotion = None
+        if len(self.emotion_history) > 0:
+            previous_emotion = self.emotion_history[-1][1]
+        
+        current_emotion = base_response['primary_emotion']
+        transition_time = 0.5
+        if previous_emotion and previous_emotion != current_emotion:
+            transition_time = self.calculate_transition_timing(previous_emotion, current_emotion)
+        
+        # Enhanced response with 3D data
+        enhanced_response = {
+            **base_response,
+            'facial_muscle_data': muscle_data,
+            'expression_intensity_map': intensity_map,
+            'animation_keyframes': keyframes,
+            'transition_timing': transition_time,
+            'previous_emotion': previous_emotion,
+            '3d_animation_ready': True
+        }
+        
+        return enhanced_response
 
 # Create main instance for usage
 cynthia_emotions = EmotionEngine()
